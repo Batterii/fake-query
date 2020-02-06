@@ -1,6 +1,6 @@
 {
 	"name": "@batterii/fake-query",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "Fake Objection query builder for unit tests",
 	"author": "Batterii, LLC",
 	"license": "UNLICENSED",
