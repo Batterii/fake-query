@@ -1,4 +1,3 @@
-import { QueryBuilder } from 'objection';
 import { noop } from 'lodash';
 import sinon from 'sinon';
 
@@ -56,12 +55,11 @@ export class FakeQuery {
 	 * The fake builder instance.
 	 *
 	 * @remarks
-	 * This is typed to QueryBuilder<any, any> to make it easier to inject into
-	 * your code under test, without fiddling about with the types in your test
-	 * code. You should be able to provide it as the return value of any
-	 * `Model#query` stub.
+	 * This is typed to any to make it easier to inject into your code under
+	 * test, without fiddling about with the types in your test code. You should
+	 * be able to provide it as the return value of any sinon stub.
 	 */
-	readonly builder: QueryBuilder<any, any>;
+	readonly builder: any;
 
 	/**
 	 * The result of the query.
