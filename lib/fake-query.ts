@@ -82,7 +82,12 @@ export class FakeQuery {
 	 */
 	constructor() {
 		this.stubs = {};
+
 		this.builder = new Proxy({
+			inspect: () => {
+				const stubs = this.stubNames.join(', ');
+				return `{ FakeQuery.builder [ ${stubs} ] }`;
+			},
 			then: (
 				onfulfilled?: (value: any) => any,
 				onrejected?: (reason: any) => any,

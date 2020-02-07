@@ -9,9 +9,10 @@ test by stubbing the static `::query` method on the desired model.
 
 The fake builder automatically creates sinon stubs for any property accessed on
 the builder, except for the `#then` and `#catch` methods used to execute the
-query and obtain its result, as normal for Objection and knex query builders.
-Created stubs always return `this`, as all QueryBuilder methods are chainable.
+query and obtain its result, as well as the `#inspect` method which prints out
+a string representation of the builder.
 
+Created stubs always return `this`, as all QueryBuilder methods are chainable.
 Test code can examine the `stubNames` and `stubs` properties to write assertions
 about the query. Typically, you will want to do a deep equal assertion on the
 stub names, followed by sinon assertions on the stubs themselves.

@@ -1,6 +1,6 @@
+import { util as chaiUtil, expect } from 'chai';
 import { FakeQuery } from '../../lib';
 import { Model } from 'objection';
-import { expect } from 'chai';
 import sinon from 'sinon';
 
 class TestModel extends Model {
@@ -83,5 +83,15 @@ describe('FakeQuery (Integration)', function() {
 		}).to.throw(Error).that.includes({
 			message: 'Fake query already executed',
 		});
+	});
+
+	it('reports builder stub names to chai inspect', function() {
+		TestModel.query()
+			.update()
+			.where('id', '<', 42);
+
+		expect(chaiUtil.inspect(qry.builder)).to.equal(
+			'{ FakeQuery.builder [ update, where ] }',
+		);
 	});
 });
