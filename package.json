@@ -2,8 +2,13 @@
 	"name": "@batterii/fake-query",
 	"version": "1.0.2",
 	"description": "Fake Objection query builder for unit tests",
+	"keywords": [
+		"objection",
+		"fake",
+		"mock"
+	],
 	"author": "Batterii, LLC",
-	"license": "UNLICENSED",
+	"license": "MIT",
 	"repository": "github:Batterii/fake-query",
 	"files": [
 		"dist/lib",
