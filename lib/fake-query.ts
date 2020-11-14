@@ -144,6 +144,25 @@ export class FakeQuery {
 	 * An array of all keys in the `stubs` property. These will appear in the
 	 * order that the stubs were created, thus indicating the order of calls, so
 	 * long as no instance method is called more than once.
+	 *
+	 * @deprecated
+	 * This property was designed to be used in assertions of this form:
+	 *
+	 * ```ts
+	 * expect(qry.stubNames).to.deep.equal(["where", "whereIn"]);
+	 * ```
+	 *
+	 * Since the order of builder method calls does not affect the builder's behavior, however,
+	 * it is more correct to write such assertions in this form:
+	 *
+	 * ```ts
+	 * expect(qry.stubs).to.have.keys(["where", "whereIn"]);
+	 * ```
+	 *
+	 * This decouples your test from the implementation detail of the builder method calls.
+	 *
+	 * Since the stubNames property no longer serves any purpose, it will be removed in the next
+	 * major release.
 	 */
 	get stubNames(): string[] {
 		return Object.keys(this.stubs);
