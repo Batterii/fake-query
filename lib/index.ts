@@ -1,1 +1,1 @@
-export { FakeQuery } from './fake-query';
+export {FakeQuery} from "./fake-query";

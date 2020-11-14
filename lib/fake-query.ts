@@ -1,5 +1,5 @@
-import { noop } from 'lodash';
-import sinon from 'sinon';
+import {noop} from "lodash";
+import sinon from "sinon";
 
 /**
  * Used internally to track whether the query should resolve or reject.
@@ -85,7 +85,7 @@ export class FakeQuery {
 
 		this.builder = new Proxy({
 			inspect: () => {
-				const stubs = this.stubNames.join(', ');
+				const stubs = this.stubNames.join(", ");
 				return `{ FakeQuery.builder [ ${stubs} ] }`;
 			},
 			then: (
@@ -129,8 +129,9 @@ export class FakeQuery {
 	 * @param value - The resolution value.
 	 * @returns The instance, for chaining.
 	 */
+	// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 	resolves(value?: any): this {
-		if (this._promise) throw new Error('Fake query already executed');
+		if (this._promise) throw new Error("Fake query already executed");
 		this._result = value;
 		this._resultType = ResultType.Success;
 		return this;
@@ -145,8 +146,9 @@ export class FakeQuery {
 	 * @param reason - The rejection value, usually an Error instance.
 	 * @returns The instance, for chaining.
 	 */
+	// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 	rejects(reason: any): this {
-		if (this._promise) throw new Error('Fake query already executed');
+		if (this._promise) throw new Error("Fake query already executed");
 		this._result = reason;
 		this._resultType = ResultType.Failure;
 		return this;
@@ -188,7 +190,7 @@ export class FakeQuery {
 		if (!stub) {
 			stub = this.stubs[prop] = sinon.stub().named(prop).callsFake(() => {
 				if (this._promise) {
-					throw new Error('Fake query already executed');
+					throw new Error("Fake query already executed");
 				}
 				return this.builder;
 			});
