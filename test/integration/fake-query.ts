@@ -52,6 +52,16 @@ describe("FakeQuery (Integration)", function() {
 		expect(qry.stubs.returning).to.be.calledWithExactly("*");
 	});
 
+	it("throws if any builder methods are called with a different this value", function() {
+		const builder = TestModel.query().where("id", ">", 42);
+
+		expect(() => {
+			builder.where.call({}, "id", "<", 100);
+		}).to.throw(Error).that.includes({
+			message: "'where' called with a different object as this",
+		});
+	});
+
 	it("throws on any builder method calls after execution", async function() {
 		const builder = TestModel.query();
 		await builder;
@@ -119,6 +129,16 @@ describe("FakeQuery (Integration)", function() {
 			builder.where({id: 42});
 		}).to.throw(Error).that.includes({
 			message: "Fake query has already been converted to a knex query",
+		});
+	});
+
+	it("throws if toKnexQuery is called with a different object as this", function() {
+		const builder = TestModel.query();
+
+		expect(() => {
+			builder.toKnexQuery.call({});
+		}).to.throw(Error).that.includes({
+			message: "toKnexQuery called with a different object as this",
 		});
 	});
 });

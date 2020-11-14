@@ -104,6 +104,9 @@ export class FakeQuery {
 		this.knexQuery = {};
 		this._convertedToKnex = false;
 
+		// eslint-disable-next-line @typescript-eslint/no-this-alias
+		const self = this;
+
 		this.builder = new Proxy({
 			inspect: () => {
 				const stubs = this.stubNames.join(", ");
@@ -116,10 +119,18 @@ export class FakeQuery {
 			catch: (
 				onrejected?: (reason: any) => any,
 			): Promise<any> => this._execute().catch(onrejected),
-			toKnexQuery: () => {
-				this._throwIfFinal();
-				this._convertedToKnex = true;
-				return this.knexQuery;
+			toKnexQuery() {
+				// eslint-disable-next-line no-underscore-dangle
+				self._throwIfFinal();
+
+				if (this !== self.builder) {
+					throw new Error("toKnexQuery called with a different object as this");
+				}
+
+				// eslint-disable-next-line no-underscore-dangle
+				self._convertedToKnex = true;
+
+				return self.knexQuery;
 			},
 		}, {
 			get: (obj: any, prop: string) => {
@@ -213,9 +224,18 @@ export class FakeQuery {
 	private _getStub(prop: string): sinon.SinonStub {
 		let stub = this.stubs[prop];
 		if (!stub) {
-			stub = this.stubs[prop] = sinon.stub().named(prop).callsFake(() => {
-				this._throwIfFinal();
-				return this.builder;
+			// eslint-disable-next-line @typescript-eslint/no-this-alias
+			const self = this;
+
+			stub = this.stubs[prop] = sinon.stub().named(prop).callsFake(function() {
+				// eslint-disable-next-line no-underscore-dangle
+				self._throwIfFinal();
+
+				// eslint-disable-next-line no-invalid-this
+				if (this !== self.builder) {
+					throw new Error(`'${prop}' called with a different object as this`);
+				}
+				return self.builder;
 			});
 		}
 		return stub;
