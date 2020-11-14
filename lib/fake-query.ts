@@ -44,12 +44,26 @@ enum ResultType {
  * with `#resolves` or `#rejects`, the invoked method will throw. This ensures
  * that your assertions are always referring to the state of the builder when it
  * was executed, and not after.
+ *
+ * The builder also inludes a pre-made stub for `#toKnexQuery`, which will return
+ * an empty object typed as `any` and likewise put the builder into a state where
+ * it can no longer be changed. This is intended to be used when testing query
+ * builders that are nested inside other query builders using knex methods that
+ * accept subqueries, such as `whereExists` or `innerJoin`.
  */
 export class FakeQuery {
 	/**
 	 * A map from called method names to the stubs created for those calls.
 	 */
 	readonly stubs: Record<string, sinon.SinonStub|undefined>;
+
+	/**
+	 * An empty object which is returned when invoking toKnexQuery on the builder.
+	 *
+	 * @remarks
+	 * This is typed to any to make it easier to use in your tests.
+	 */
+	readonly knexQuery: any;
 
 	/**
 	 * The fake builder instance.
@@ -78,10 +92,17 @@ export class FakeQuery {
 	private _promise?: Promise<any>;
 
 	/**
+	 * Tracks whether or not the query has been converted to a knex query.
+	 */
+	private _convertedToKnex: boolean;
+
+	/**
 	 * Creates a FakeQuery instance.
 	 */
 	constructor() {
 		this.stubs = {};
+		this.knexQuery = {};
+		this._convertedToKnex = false;
 
 		this.builder = new Proxy({
 			inspect: () => {
@@ -91,11 +112,15 @@ export class FakeQuery {
 			then: (
 				onfulfilled?: (value: any) => any,
 				onrejected?: (reason: any) => any,
-			): Promise<any> => this._execute()
-				.then(onfulfilled, onrejected),
+			): Promise<any> => this._execute().then(onfulfilled, onrejected),
 			catch: (
 				onrejected?: (reason: any) => any,
 			): Promise<any> => this._execute().catch(onrejected),
+			toKnexQuery: () => {
+				this._throwIfFinal();
+				this._convertedToKnex = true;
+				return this.knexQuery;
+			},
 		}, {
 			get: (obj: any, prop: string) => {
 				if (prop in obj) return obj[prop];
@@ -131,7 +156,7 @@ export class FakeQuery {
 	 */
 	// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 	resolves(value?: any): this {
-		if (this._promise) throw new Error("Fake query already executed");
+		this._throwIfFinal();
 		this._result = value;
 		this._resultType = ResultType.Success;
 		return this;
@@ -148,7 +173,7 @@ export class FakeQuery {
 	 */
 	// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 	rejects(reason: any): this {
-		if (this._promise) throw new Error("Fake query already executed");
+		this._throwIfFinal();
 		this._result = reason;
 		this._resultType = ResultType.Failure;
 		return this;
@@ -189,12 +214,21 @@ export class FakeQuery {
 		let stub = this.stubs[prop];
 		if (!stub) {
 			stub = this.stubs[prop] = sinon.stub().named(prop).callsFake(() => {
-				if (this._promise) {
-					throw new Error("Fake query already executed");
-				}
+				this._throwIfFinal();
 				return this.builder;
 			});
 		}
 		return stub;
+	}
+
+	/**
+	 * Throws if the fake query has entered a state where it can no longer be changed. This happens
+	 * when the query is executed, or when it has been converted to a knex query.
+	 */
+	private _throwIfFinal(): void {
+		if (this._promise) throw new Error("Fake query already executed");
+		if (this._convertedToKnex) {
+			throw new Error("Fake query has already been converted to a knex query");
+		}
 	}
 }

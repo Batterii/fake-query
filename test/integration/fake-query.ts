@@ -64,8 +64,7 @@ describe("FakeQuery (Integration)", function() {
 	});
 
 	it("throws on resolution value change after execution", async function() {
-		const builder = TestModel.query();
-		await builder;
+		await TestModel.query();
 
 		expect(() => {
 			qry.resolves({});
@@ -75,8 +74,7 @@ describe("FakeQuery (Integration)", function() {
 	});
 
 	it("throws on rejection value change after execution", async function() {
-		const builder = TestModel.query();
-		await builder;
+		await TestModel.query();
 
 		expect(() => {
 			qry.rejects({});
@@ -93,5 +91,34 @@ describe("FakeQuery (Integration)", function() {
 		expect(chaiUtil.inspect(qry.builder)).to.equal(
 			"{ FakeQuery.builder [ update, where ] }",
 		);
+	});
+
+	it("tracks toKnexQuery calls separately, with its own return value", function() {
+		const result = TestModel.query().toKnexQuery();
+
+		expect(qry.stubs).to.be.empty;
+		expect(result).to.equal(qry.knexQuery);
+	});
+
+	it("throws if toKnexQuery is invoked after execution", async function() {
+		const builder = TestModel.query();
+		await builder;
+
+		expect(() => {
+			builder.toKnexQuery();
+		}).to.throw(Error).that.includes({
+			message: "Fake query already executed",
+		});
+	});
+
+	it("throws on any builder method calls after invoking toKnexQuery", function() {
+		const builder = TestModel.query();
+		builder.toKnexQuery();
+
+		expect(() => {
+			builder.where({id: 42});
+		}).to.throw(Error).that.includes({
+			message: "Fake query has already been converted to a knex query",
+		});
 	});
 });

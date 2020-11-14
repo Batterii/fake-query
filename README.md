@@ -27,6 +27,12 @@ its instance methods are invoked, or if you attempt to change its result with
 assertions are always referring to the state of the builder when it was
 executed, and not after.
 
+The builder also inludes a pre-made stub for `#toKnexQuery`, which will return
+an empty object typed as `any` and likewise put the builder into a state where
+it can no longer be changed. This is intended to be used when testing query
+builders that are nested inside other query builders using knex methods that
+accept subqueries, such as `whereExists` or `innerJoin`.
+
 # Example (Using TypeScript, Mocha, and Chai)
 ```ts
 import { FakeQuery } from '@batterii/fake-query';
