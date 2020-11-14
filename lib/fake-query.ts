@@ -18,38 +18,6 @@ enum ResultType {
 
 /**
  * A wrapper around a fake Objection.js query builder.
- *
- * @remarks
- * This class exposes a fake QueryBuilder instance on its `builder` property.
- * You can inject the fake into your code under test by stubbing the `#query`
- * method on the desired model.
- *
- * The fake builder automatically creates sinon stubs for any property accessed
- * on the builder, except for the `#then` and `#catch` methods used to execute
- * the query and obtain its result, as normal for Objection and knex query
- * builders. Created stubs always return `this`, as all QueryBuilder methods are
- * chainable.
- *
- * Test code can examine the `stubNames` and `stubs` properties to write
- * assertions about the query. Typically, you will want to do a deep equal
- * assertion on the stub names, followed by sinon assertions on the stubs
- * themselves.
- *
- * By default, the fake builder will neither resolve or reject when executed,
- * as is normal for sinon stubs. If you want it to resolve or reject, simply
- * involve the `#resolves` or `#rejects` methods with the desired result value.
- *
- * Once the fake builder has been executed, it can no longer be changed. If any
- * of its instance methods are invoked, or if you attempt to change its result
- * with `#resolves` or `#rejects`, the invoked method will throw. This ensures
- * that your assertions are always referring to the state of the builder when it
- * was executed, and not after.
- *
- * The builder also inludes a pre-made stub for `#toKnexQuery`, which will return
- * an empty object typed as `any` and likewise put the builder into a state where
- * it can no longer be changed. This is intended to be used when testing query
- * builders that are nested inside other query builders using knex methods that
- * accept subqueries, such as `whereExists` or `innerJoin`.
  */
 export class FakeQuery {
 	/**
