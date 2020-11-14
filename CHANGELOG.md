@@ -18,3 +18,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Implemented `toKnexQuery` method on fake builders.
+
+[2.0.0]: https://github.com/Batterii/fake-query/releases/tag/v2.0.0
+[1.2.0]: https://github.com/Batterii/fake-query/releases/tag/v1.2.0
