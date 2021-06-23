@@ -52,7 +52,7 @@
 		"objection": "^2.2.15",
 		"sinon-chai": "^3.7.0",
 		"source-map-support": "^0.5.19",
-		"ts-node": "^8.10.2",
+		"ts-node": "^10.0.0",
 		"typescript": "^4.3.4",
 		"yo": "^4.2.0"
 	},
