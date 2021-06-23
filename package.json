@@ -46,7 +46,7 @@
 		"@typescript-eslint/eslint-plugin": "^4.28.0",
 		"@typescript-eslint/parser": "^4.28.0",
 		"chai": "^4.3.4",
-		"eslint": "^6.8.0",
+		"eslint": "^7.29.0",
 		"knex": "^0.20.15",
 		"mocha": "^8.4.0",
 		"objection": "^2.2.15",
