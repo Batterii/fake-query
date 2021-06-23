@@ -41,7 +41,7 @@
 		"@types/lodash": "^4.14.170",
 		"@types/mocha": "^8.2.2",
 		"@types/node": "^10.17.60",
-		"@types/sinon": "^7.5.2",
+		"@types/sinon": "^10.0.2",
 		"@types/sinon-chai": "^3.2.5",
 		"@typescript-eslint/eslint-plugin": "^4.28.0",
 		"@typescript-eslint/parser": "^4.28.0",
@@ -58,6 +58,6 @@
 	},
 	"dependencies": {
 		"lodash": "^4.17.21",
-		"sinon": "^7.5.0"
+		"sinon": "^10.0.0"
 	}
 }
